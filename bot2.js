@@ -10,7 +10,7 @@ const Datastore = require('nedb');
   //CREDENTIALS
   let login = 'solvolyse@company-mails.com'
   let password = '0bae067b'
-  // Variables
+  // Variables--
   let prodcount = '';
   let price;
   let pages = 0;
@@ -24,6 +24,8 @@ const Datastore = require('nedb');
     price:'',
     date:''
   }
+
+
   let arrayofdata = [];
   const database = new Datastore('../BotGadgetMaster/database.db');
   database.loadDatabase();
