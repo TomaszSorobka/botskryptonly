@@ -27,7 +27,7 @@ const Datastore = require('nedb');
 
 
   let arrayofdata = [];
-  const database = new Datastore('../BotGadgetMaster/database.db');
+  const database = new Datastore('database.db');
   database.loadDatabase();
   const date = new Date();
   let day = date.getDate();
@@ -116,4 +116,5 @@ const Datastore = require('nedb');
 
     console.log('The subpage of ' + link + ' number ' + podstronki + ' has been finished.')
     }
+    browser.close();
 })();
