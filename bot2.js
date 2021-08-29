@@ -25,7 +25,7 @@ const Datastore = require('nedb');
     date:''
   }
   let arrayofdata = [];
-  const database = new Datastore('database.db');
+  const database = new Datastore('../BotGadgetMaster/database.db');
   database.loadDatabase();
   const date = new Date();
   let day = date.getDate();
