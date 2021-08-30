@@ -2,13 +2,13 @@ const puppeteer = require('puppeteer');
 // const Datastore = require('nedb');
 const mysql = require('mysql');
 
-var con = mysql.createConnection({
+var pool = mysql.createPool({
   host: 'remotemysql.com',
   port: '3306', 
   user: 'v2AqjSz2oR', 
   password: 'MuvdDi9iwR',
   database: 'v2AqjSz2oR',
-  connectionLimit: '100',
+  connectionLimit: '1000',
   multipleStatements: true
 });
 
@@ -113,15 +113,14 @@ var con = mysql.createConnection({
                     data = {productname: productname, stock: stock, price: price, date: UTCdate};
                     arrayofdata.push(data);
 					
-					          con.connect(function(err){
-                      if (err) throw err;
+					          //pool.connect(function(err){
+                      //if (err) throw err;
                       let sqlstring = `INSERT into Main(productname, stock, price, date)values('${productname}', ${stock}, ${price}, '${UTCdate}')`;
-                      con.query(sqlstring, function(err, result){
+                      pool.query(sqlstring, function(err, result){
                         if (err) throw err;
                         console.log('added');
                       })
-                    }) 
-					
+                      
                     // database.insert(data);
                     console.log(data);
 
