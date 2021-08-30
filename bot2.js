@@ -1,5 +1,16 @@
 const puppeteer = require('puppeteer');
-const Datastore = require('nedb');
+// const Datastore = require('nedb');
+const mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: 'remotemysql.com',
+  port: '3306', 
+  user: 'v2AqjSz2oR', 
+  password: 'MuvdDi9iwR',
+  database: 'v2AqjSz2oR',
+  connectionLimit: '100',
+  multipleStatements: true
+});
 
 (async () => {
   const browser = await puppeteer.launch({headless: true, args: ["--no-sandbox"]});
@@ -10,7 +21,7 @@ const Datastore = require('nedb');
   //CREDENTIALS
   let login = 'solvolyse@company-mails.com'
   let password = '0bae067b'
-  // Variables--
+  // Variables
   let prodcount = '';
   let price;
   let pages = 0;
@@ -24,11 +35,9 @@ const Datastore = require('nedb');
     price:'',
     date:''
   }
-
-
   let arrayofdata = [];
-  const database = new Datastore('database.db');
-  database.loadDatabase();
+  // const database = new Datastore('database.db');
+  // database.loadDatabase();
   const date = new Date();
   let day = date.getDate();
   if(day<10) day = '0'+day;
@@ -103,7 +112,17 @@ const Datastore = require('nedb');
 
                     data = {productname: productname, stock: stock, price: price, date: UTCdate};
                     arrayofdata.push(data);
-                    database.insert(data);
+					
+					          con.connect(function(err){
+                      if (err) throw err;
+                      let sqlstring = `INSERT into Main(productname, stock, price, date)values('${productname}', ${stock}, ${price}, '${UTCdate}')`;
+                      con.query(sqlstring, function(err, result){
+                        if (err) throw err;
+                        console.log('added');
+                      })
+                    }) 
+					
+                    // database.insert(data);
                     console.log(data);
 
                     await Promise.all([
@@ -116,5 +135,5 @@ const Datastore = require('nedb');
 
     console.log('The subpage of ' + link + ' number ' + podstronki + ' has been finished.')
     }
-    browser.close();
+	browser.close();
 })();
