@@ -115,7 +115,7 @@ var pool = mysql.createPool({
 					
 					          //pool.connect(function(err){
                       //if (err) throw err;
-                      let sqlstring = `INSERT into Main(productname, stock, price, date)values('${productname}', ${stock}, ${price}, '${UTCdate}')`;
+                      let sqlstring = `INSERT into Main(productname, stock, price, date)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
                       pool.query(sqlstring, function(err, result){
                         if (err) throw err;
                         console.log('added');
