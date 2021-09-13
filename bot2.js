@@ -3,12 +3,12 @@ const puppeteer = require('puppeteer');
 const mysql = require('mysql');
 
 var pool = mysql.createPool({
-  host: 'remotemysql.com',
+  host: 'eu-cdbr-west-01.cleardb.com',
   port: '3306', 
-  user: 'v2AqjSz2oR', 
-  password: 'MuvdDi9iwR',
-  database: 'v2AqjSz2oR',
-  connectionLimit: '1000',
+  user: 'b71a94d125faf7', 
+  password: '575376a6',
+  database: 'heroku_e84c4376fe837e8',
+  connectionLimit: '10',
   multipleStatements: true
 });
 
@@ -36,8 +36,6 @@ var pool = mysql.createPool({
     date:''
   }
   let arrayofdata = [];
-  // const database = new Datastore('database.db');
-  // database.loadDatabase();
   const date = new Date();
   let day = date.getDate();
   if(day<10) day = '0'+day;
@@ -110,12 +108,10 @@ var pool = mysql.createPool({
                     stock = parseInt(stock);
                     //Pushing the data into the array
 
-                    data = {productname: productname, stock: stock, price: price, date: UTCdate};
+                    data = {productname: productname, stock: stock, price: price, dater: UTCdate};
                     arrayofdata.push(data);
-					
-					          //pool.connect(function(err){
-                      //if (err) throw err;
-                      let sqlstring = `INSERT into Main(productname, stock, price, date)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
+					          
+                      let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
                       pool.query(sqlstring, function(err, result){
                         if (err) throw err;
                         console.log('added');
