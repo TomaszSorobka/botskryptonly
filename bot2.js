@@ -79,6 +79,7 @@ var pool = mysql.createPool({
                     page.waitForNavigation(),
                     await products[i].click()
                     ]);
+                    await page.waitForTimeout(10000);
                     //Getting the product's name
                     productname = await page.evaluate(
                       () => document.querySelector('h1').innerHTML
@@ -125,7 +126,7 @@ var pool = mysql.createPool({
                     await page.goto('https://hurt.handlosfera.pl/wszystkie' + podstronki + '.html')
                     ]);
                     products = await page.$$('.singleProductContainer');
-                    await page.waitForTimeout(60000);
+                    await page.waitForTimeout(50000); //add catch?
                 }
 
     console.log('The subpage of ' + link + ' number ' + podstronki + ' has been finished.')
