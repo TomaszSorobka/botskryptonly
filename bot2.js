@@ -13,7 +13,7 @@ var pool = mysql.createPool({
 });
 
 (async () => {
-  const browser = await puppeteer.launch({headless: true, args: ["--no-sandbox"]});
+  const browser = await puppeteer.launch({headless: false, args: ["--no-sandbox"]});
   const page = await browser.newPage();
   await page.goto('https://hurt.handlosfera.pl/login');
   let link = 'https://hurt.handlosfera.pl/wszystkie.html'
@@ -22,6 +22,7 @@ var pool = mysql.createPool({
   let login = 'solvolyse@company-mails.com'
   let password = '0bae067b'
   // Variables
+  let onemoretime = false;
   let prodcount = '';
   let price;
   let pages = 0;
@@ -46,18 +47,53 @@ var pool = mysql.createPool({
   console.log(UTCdate);
 
   //LOG IN to handlosfera
-  await page.type('input[name="login"]', login);
-  await page.type('input[type="password"]', password);
+  try {
+      await page.type('input[name="login"]', login);
+      await page.type('input[type="password"]', password);
+  
+      
+      await page.click('.redBtn')
+      
 
-  await Promise.all([
-    page.waitForNavigation(),
-    await page.click('.redBtn')
-  ]);
+      // await Promise.all([
+      //   page.waitForNavigation({timeout: 60000}),
+      //   await page.click('.redBtn')
+      // ]);
 
-  await Promise.all([
-    page.waitForNavigation(),
-    await page.goto(link)
-  ]);
+      console.log("Logged in :)")
+  } catch (err) {
+    console.log('Could not login or load the page with products');
+    console.error(err);
+    process.abort();
+  } 
+
+  try {
+    await Promise.all([
+      page.waitForNavigation(),
+      await page.goto(link)
+    ]);
+  } catch (err) {
+    console.log('Could not load product page again...');
+    console.error(err);
+    console.log('Trying one more time...');
+    onemoretime = true;
+    
+    
+  }
+  if (onemoretime) {
+    try {
+      await Promise.all([
+        page.waitForNavigation(),
+        await page.goto(link)
+      ]);
+      console.log("Second time success")
+  } catch (err) {
+    console.log('Could not login again...');
+    console.error(err);
+    process.abort();
+    } 
+  }
+
 
   // Establishing the number of pages
   prodcount = await page.evaluate(
@@ -74,11 +110,14 @@ var pool = mysql.createPool({
                 //INNNER LOOP scraping the information
                 for (let i = 0; i<products.length; i++) {
                   
+                  try {
+                   
                     //Entering the product
                     await Promise.all([
                     page.waitForNavigation(),
                     await products[i].click()
                     ]);
+                    
                     await page.waitForTimeout(10000);
                     //Getting the product's name
                     productname = await page.evaluate(
@@ -113,14 +152,16 @@ var pool = mysql.createPool({
                     arrayofdata.push(data);
 					          
                       let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
-                      pool.query(sqlstring, function(err, result){
-                        if (err) throw err;
-                        console.log('added');
-                      })
+                       pool.query(sqlstring, function(err, result){
+                         if (err) throw err;
+                         console.log('added');
+                       })
                       
-                    // database.insert(data);
-                    console.log(data);
-
+                    console.log(productname);
+                    } catch (err) {
+                      console.log("Could not add the product because why not");
+                      console.error(err);
+                    }
                     await Promise.all([
                     page.waitForNavigation(),
                     await page.goto('https://hurt.handlosfera.pl/wszystkie' + podstronki + '.html')
