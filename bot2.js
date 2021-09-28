@@ -157,11 +157,11 @@ var pool = mysql.createPool({
                     data = {productname: productname, stock: stock, price: price, dater: UTCdate};
                     arrayofdata.push(data);
 					          
-                      // let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
-                      //  pool.query(sqlstring, function(err, result){
-                      //    if (err) throw err;
-                      //    console.log('added');
-                      //  })
+                      let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
+                       pool.query(sqlstring, function(err, result){
+                         if (err) throw err;
+                         console.log('added');
+                       })
                       
                     console.log(productname);
                     } catch (err) {
