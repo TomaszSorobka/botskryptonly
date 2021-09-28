@@ -15,6 +15,8 @@ var pool = mysql.createPool({
 (async () => {
   const browser = await puppeteer.launch({headless: true, args: ["--no-sandbox"]});
   const page = await browser.newPage();
+  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
+  await page.setViewport({ width: 1280, height: 720 });
   try {
     await page.goto('https://hurt.handlosfera.pl/login');
   } catch (err) {
@@ -56,15 +58,11 @@ var pool = mysql.createPool({
   try {
       await page.type('input[name="login"]', login);
       await page.type('input[type="password"]', password);
-  
-      
-      await page.click('.redBtn')
-      
 
-      // await Promise.all([
-      //   page.waitForNavigation({timeout: 60000}),
-      //   await page.click('.redBtn')
-      // ]);
+      await Promise.all([
+        page.waitForNavigation({timeout: 60000}),
+        await page.click('.redBtn')
+      ]);
 
       console.log("Logged in :)")
   } catch (err) {
@@ -110,7 +108,7 @@ var pool = mysql.createPool({
 
   //OUTER LOOP for subpages
   for (let podstronki = 1; podstronki<pages+1; podstronki++) {
-    await page.goto('https://hurt.handlosfera.pl/wszystkie' + podstronki + '.html');
+    await page.goto('https://hurt.handlosfera.pl/wszystkie' + podstronki + '.html', {waitUntil: 'networkidle2'});
     products = await page.$$('.singleProductContainer');
 
                 //INNNER LOOP scraping the information
@@ -123,22 +121,36 @@ var pool = mysql.createPool({
                     page.waitForNavigation(),
                     await products[i].click()
                     ]);
-                    
-                    await page.waitForTimeout(10000);
+                    //console.log('Entered the product');
                     //Getting the product's name
-                    productname = await page.evaluate(
-                      () => document.querySelector('h1').innerHTML
-                    );
+                    await Promise.all([
+                      await page.waitForSelector('h1'),
+                      productname = await page.evaluate(
+                        () => document.querySelector('h1').innerHTML
+                      )
+                    ]);
+                    //console.log('Got the name');
+
                     //Getting the product's prize
-                    price = await page.evaluate(
-                      () => document.querySelector('.actualPrize').innerHTML
-                    );
+                    await Promise.all([
+                      await page.waitForSelector('.actualPrize'),
+                      price = await page.evaluate(
+                        () => document.querySelector('.actualPrize').innerHTML
+                      )
+                    ]);
+                    //console.log("Got the price");
                     price = price.replace(/[^\d.-]/g, '');
                     price = parseFloat(price);
                     //Getting the product's quantity
-                    stock = await page.evaluate(
-                      () => document.querySelector('.greenPrice').innerHTML
-                  );
+                    
+                    await Promise.all([
+                      await page.waitForSelector('.greenPrice'),
+                      stock = await page.evaluate(
+                        () => document.querySelector('.greenPrice').innerHTML,
+                      )
+                    ]);
+                    
+                    //console.log('Got the stock');
                     stock = stock.replace(/\D/g,'');
                     // Sending a request if a product's quantity is listed as 99+
                     if (stock == 99) {
@@ -157,11 +169,11 @@ var pool = mysql.createPool({
                     data = {productname: productname, stock: stock, price: price, dater: UTCdate};
                     arrayofdata.push(data);
 					          
-                      let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
-                       pool.query(sqlstring, function(err, result){
-                         if (err) throw err;
-                         console.log('added');
-                       })
+                       let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
+                        pool.query(sqlstring, function(err, result){
+                          if (err) throw err;
+                          console.log('added');
+                        })
                       
                     console.log(productname);
                     } catch (err) {
