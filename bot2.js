@@ -15,7 +15,13 @@ var pool = mysql.createPool({
 (async () => {
   const browser = await puppeteer.launch({headless: true, args: ["--no-sandbox"]});
   const page = await browser.newPage();
-  await page.goto('https://hurt.handlosfera.pl/login');
+  try {
+    await page.goto('https://hurt.handlosfera.pl/login');
+  } catch (err) {
+    console.log('Could not go to login page');
+    console.error(err);
+    process.abort();
+  }
   let link = 'https://hurt.handlosfera.pl/wszystkie.html'
 
   //CREDENTIALS
@@ -151,11 +157,11 @@ var pool = mysql.createPool({
                     data = {productname: productname, stock: stock, price: price, dater: UTCdate};
                     arrayofdata.push(data);
 					          
-                      let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
-                       pool.query(sqlstring, function(err, result){
-                         if (err) throw err;
-                         console.log('added');
-                       })
+                      // let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
+                      //  pool.query(sqlstring, function(err, result){
+                      //    if (err) throw err;
+                      //    console.log('added');
+                      //  })
                       
                     console.log(productname);
                     } catch (err) {
