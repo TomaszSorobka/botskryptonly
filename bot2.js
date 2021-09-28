@@ -13,7 +13,7 @@ var pool = mysql.createPool({
 });
 
 (async () => {
-  const browser = await puppeteer.launch({headless: false, args: ["--no-sandbox"]});
+  const browser = await puppeteer.launch({headless: true, args: ["--no-sandbox"]});
   const page = await browser.newPage();
   await page.goto('https://hurt.handlosfera.pl/login');
   let link = 'https://hurt.handlosfera.pl/wszystkie.html'
