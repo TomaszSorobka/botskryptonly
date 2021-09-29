@@ -13,15 +13,26 @@ var pool = mysql.createPool({
 });
 
 (async () => {
+  let errorcatcher = 1;
   const browser = await puppeteer.launch({headless: true, args: ["--no-sandbox"]});
   const page = await browser.newPage();
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
   await page.setViewport({ width: 1280, height: 720 });
-  try {
-    await page.goto('https://hurt.handlosfera.pl/login');
-  } catch (err) {
-    console.log('Could not go to login page');
-    console.error(err);
+
+  while (errorcatcher > 0 && errorcatcher <=5) {
+    errorcatcher++;
+    try {
+      await Promise.all([
+        page.waitForNavigation(),
+        await page.goto('https://hurt.handlosfera.pl/login')
+      ]);
+      errorcatcher = 0;
+    } catch (err) {
+      console.log('Could not go to login page. Try number: ' + errorcatcher-1);
+      console.error(err);
+    }
+  }
+  if (errorcatcher == 6) {
     process.abort();
   }
   let link = 'https://hurt.handlosfera.pl/wszystkie.html'
