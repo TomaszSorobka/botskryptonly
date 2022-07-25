@@ -14,7 +14,7 @@ var pool = mysql.createPool({
 
 (async () => {
   let errorcatcher = 1;
-  const browser = await puppeteer.launch({headless: true, args: ["--no-sandbox"]});
+  const browser = await puppeteer.launch({headless: false, args: ["--no-sandbox"]});
   const page = await browser.newPage();
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36');
   await page.setViewport({ width: 1280, height: 720 });
@@ -36,6 +36,7 @@ var pool = mysql.createPool({
     process.abort();
   }
   let link = 'https://hurt.handlosfera.pl/wszystkie.html'
+  let beforelink = "https://hurt.handlosfera.pl/login/wZFC9RxIJgln2Darnu0AnETJVAaJhA3peEIL3EQIu1HHGAREGEILWMyDJ1xLbu1YPyaFKMyFGyTGRuJrWyJJE9xAP9HB0R1X2LxGKIKoXI0Eb10ojpxL6OIJyE0X3I3EzMUZdWaL2RKJIOKGfMQE4D2YLglHlMKBGyTMhITHdMSn1W3LiLQoVcRF5cyHv5zJZOSFGMKH1HKEbESECqyougxpzyGny5xZiIyZLcKEb50HcEzreMUoicUqEA1YOyTn3NSp2S0FxMTGCS3Zfu3YlqHq5EKAmyxJxkJp6ExZJ5xZuuQMnAKr6AIoWuaFlMTJ2cIMKuaA5bIrASUqIu3YWEUo1STn0SRASMJZYk0MHcTIxy0ngWwI5SzEZA1HAETrUq1M5ESE"
 
   //CREDENTIALS
   let login = 'solvolyse@company-mails.com'
@@ -67,12 +68,12 @@ var pool = mysql.createPool({
 
   //LOG IN to handlosfera
   try {
-      await page.type('input[name="login"]', login);
+      await page.type('input[name="email"]', login);
       await page.type('input[type="password"]', password);
 
       await Promise.all([
-        page.waitForNavigation({timeout: 60000}),
-        await page.click('.redBtn')
+        page.waitForNavigation({timeout: 5000}), // was 60000
+        await page.click('.btn-primary')
       ]);
 
       console.log("Logged in :)")
@@ -84,6 +85,21 @@ var pool = mysql.createPool({
 
   try {
     await Promise.all([
+      
+      page.waitForNavigation(),
+      await page.goto(beforelink)
+    ]);
+  } catch (err) {
+    console.log('Could not load product page again...');
+    console.error(err);
+    console.log('Trying one more time...');
+    onemoretime = true;
+  }
+
+
+  try {
+    await Promise.all([
+      
       page.waitForNavigation(),
       await page.goto(link)
     ]);
@@ -92,9 +108,8 @@ var pool = mysql.createPool({
     console.error(err);
     console.log('Trying one more time...');
     onemoretime = true;
-    
-    
   }
+
   if (onemoretime) {
     try {
       await Promise.all([
@@ -177,14 +192,14 @@ var pool = mysql.createPool({
                     stock = parseInt(stock);
                     //Pushing the data into the array
 
-                    data = {productname: productname, stock: stock, price: price, dater: UTCdate};
-                    arrayofdata.push(data);
+                    // data = {productname: productname, stock: stock, price: price, dater: UTCdate};
+                    // arrayofdata.push(data);
 					          
-                       let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
-                        pool.query(sqlstring, function(err, result){
-                          if (err) throw err;
-                          console.log('added');
-                        })
+                    //    let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
+                    //     pool.query(sqlstring, function(err, result){
+                    //       if (err) throw err;
+                    //       console.log('added');
+                    //     })
                       
                     console.log(productname);
                     } catch (err) {
@@ -196,7 +211,7 @@ var pool = mysql.createPool({
                     await page.goto('https://hurt.handlosfera.pl/wszystkie' + podstronki + '.html')
                     ]);
                     products = await page.$$('.singleProductContainer');
-                    await page.waitForTimeout(50000); //add catch?
+                    await page.waitForTimeout(5000); //add catch? add zeroes
                 }
 
     console.log('The subpage of ' + link + ' number ' + podstronki + ' has been finished.')
