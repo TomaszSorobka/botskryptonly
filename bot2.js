@@ -36,7 +36,7 @@ var pool = mysql.createPool({
     process.abort();
   }
   let link = 'https://hurt.handlosfera.pl/wszystkie.html'
-  let beforelink = "https://hurt.handlosfera.pl/login/wZFC9RxIJgln2Darnu0AnETJVAaJhA3peEIL3EQIu1HHGAREGEILWMyDJ1xLbu1YPyaFKMyFGyTGRuJrWyJJE9xAP9HB0R1X2LxGKIKoXI0Eb10ojpxL6OIJyE0X3I3EzMUZdWaL2RKJIOKGfMQE4D2YLglHlMKBGyTMhITHdMSn1W3LiLQoVcRF5cyHv5zJZOSFGMKH1HKEbESECqyougxpzyGny5xZiIyZLcKEb50HcEzreMUoicUqEA1YOyTn3NSp2S0FxMTGCS3Zfu3YlqHq5EKAmyxJxkJp6ExZJ5xZuuQMnAKr6AIoWuaFlMTJ2cIMKuaA5bIrASUqIu3YWEUo1STn0SRASMJZYk0MHcTIxy0ngWwI5SzEZA1HAETrUq1M5ESE"
+  let beforelink = "https://hurt.handlosfera.pl/login/wZFC9p2Yjb2FM92nixJZLOyoM9lD5yxp380EZOGL6IKq0DwE4AGLXqQEiMHFWEaA6E1DlDII2HynTcxIlDxoCyxAjV3Mlx2pA12GY12MbgzrOMJn2ASph9lFBSUHh1RB4ywAMA3qDEzMJgJFU5TB1ZSrbSxM5WwGPcHpJk2DG9lH5qxLVqRB0VKEQSwDdyap0pmEvqyIDSGZYq0LyE3LnExHKuSGjk2pPARMAEHo1gHoCSJoaczD4DUFeEGDTu2FdMxHMWIISyHq0xzFeEUFTuxDSSGMKS3FOyRGe40p5pHpJc0Y6q0LQO1EDWQnMqwZlVSphWxnyc2IbyIo1qwFgM3YXITocy2HeIzAe0JrKSTE1W0I3IwrYEKq5RmX6MHLOAaZWyTJ"
 
   //CREDENTIALS
   let login = 'solvolyse@company-mails.com'
@@ -192,14 +192,14 @@ var pool = mysql.createPool({
                     stock = parseInt(stock);
                     //Pushing the data into the array
 
-                    // data = {productname: productname, stock: stock, price: price, dater: UTCdate};
-                    // arrayofdata.push(data);
+                    data = {productname: productname, stock: stock, price: price, dater: UTCdate};
+                    arrayofdata.push(data);
 					          
-                    //    let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
-                    //     pool.query(sqlstring, function(err, result){
-                    //       if (err) throw err;
-                    //       console.log('added');
-                    //     })
+                       let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
+                        pool.query(sqlstring, function(err, result){
+                          if (err) throw err;
+                          console.log('added');
+                        })
                       
                     console.log(productname);
                     } catch (err) {
