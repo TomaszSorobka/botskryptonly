@@ -72,7 +72,7 @@ var pool = mysql.createPool({
       await page.type('input[type="password"]', password);
 
       await Promise.all([
-        page.waitForNavigation({timeout: 50000}), // was 60000
+        page.waitForNavigation({timeout: 25000}), // was 60000
         await page.click('.btn-primary')
       ]);
 
