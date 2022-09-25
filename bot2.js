@@ -72,7 +72,7 @@ var pool = mysql.createPool({
       await page.type('input[type="password"]', password);
 
       await Promise.all([
-        page.waitForNavigation({timeout: 25000}), // was 60000
+        page.waitForNavigation({timeout: 20000}), // was 60000
         await page.click('.btn-primary')
       ]);
 
@@ -192,14 +192,14 @@ var pool = mysql.createPool({
                     stock = parseInt(stock);
                     //Pushing the data into the array
 
-                    // data = {productname: productname, stock: stock, price: price, dater: UTCdate};
-                    // arrayofdata.push(data);
+                    data = {productname: productname, stock: stock, price: price, dater: UTCdate};
+                    arrayofdata.push(data);
 					          
-                    //    let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
-                    //     pool.query(sqlstring, function(err, result){
-                    //       if (err) throw err;
-                    //       console.log('added');
-                    //     })
+                       let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
+                        pool.query(sqlstring, function(err, result){
+                          if (err) throw err;
+                          console.log('added');
+                        })
                       
                     console.log(productname);
                     } catch (err) {
