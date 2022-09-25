@@ -36,7 +36,7 @@ var pool = mysql.createPool({
     process.abort();
   }
   let link = 'https://hurt.handlosfera.pl/wszystkie.html';
-  let beforelink = "https://hurt.handlosfera.pl/login/wZFC9pJn3OUFvcaM4HSr1AxJ082o6IKMfAzowAyZuWxI2tUJggTq6SmMBIIZAMIGjqzLD9PojITrJI2IcgRnauwFjDxpj8HIcOyE5SmGayUrGuSGjEUBagHpmMxDngTJwAwD18TEuWyojcUGGMRJFy3ASuzMlRRF5ZaMQE2Yjf0IIMmGRqyDwcyLZ90YX50pnSxMl8PIGq2qluzoekzLitzZ1NKoRuIBxEmGWAGoPIyZiqmE1g2A1LTGibKLu9xEb9FnC9PrRMzD3WJAec2E4baF4bUoXSJnFuHrecKGXAIH6I0IBuUnKIIMBM3ATIaD48TJbgRJIAHr0u0G2cUATWSqUSxL3RKrmO3okpGFiMRZ4y2Xf1TA5EIMu1TZvcao6M2G18lH";
+  let beforelink; // = "https://hurt.handlosfera.pl/login/wZFC9pJn3OUFvcaM4HSr1AxJ082o6IKMfAzowAyZuWxI2tUJggTq6SmMBIIZAMIGjqzLD9PojITrJI2IcgRnauwFjDxpj8HIcOyE5SmGayUrGuSGjEUBagHpmMxDngTJwAwD18TEuWyojcUGGMRJFy3ASuzMlRRF5ZaMQE2Yjf0IIMmGRqyDwcyLZ90YX50pnSxMl8PIGq2qluzoekzLitzZ1NKoRuIBxEmGWAGoPIyZiqmE1g2A1LTGibKLu9xEb9FnC9PrRMzD3WJAec2E4baF4bUoXSJnFuHrecKGXAIH6I0IBuUnKIIMBM3ATIaD48TJbgRJIAHr0u0G2cUATWSqUSxL3RKrmO3okpGFiMRZ4y2Xf1TA5EIMu1TZvcao6M2G18lH";
 
   //CREDENTIALS
   let login = 'solvolyse@company-mails.com'
@@ -65,6 +65,7 @@ var pool = mysql.createPool({
   let year = date.getFullYear();
   let UTCdate = year.toString() +'-'+month.toString()+'-'+day.toString();
   console.log(UTCdate);
+  let hrefs1;
 
   //LOG IN to handlosfera
   try {
@@ -82,6 +83,20 @@ var pool = mysql.createPool({
     console.error(err);
     process.abort();
   } 
+  try {
+    hrefs1 = await page.evaluate(
+      () => Array.from(
+        document.querySelectorAll('a[href]'),
+        a => a.getAttribute('href')
+      )
+    );
+
+    beforelink = hrefs1[2];
+  } catch (err) {
+    console.log("Beforelink cannot be fetched: " + err);
+  }
+
+  
 
   try {
     await Promise.all([
