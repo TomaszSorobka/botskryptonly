@@ -35,8 +35,8 @@ var pool = mysql.createPool({
   if (errorcatcher == 6) {
     process.abort();
   }
-  let link = 'https://hurt.handlosfera.pl/wszystkie.html'
-  let beforelink = "https://hurt.handlosfera.pl/login/wZFC9p2Yjb2FM92nixJZLOyoM9lD5yxp380EZOGL6IKq0DwE4AGLXqQEiMHFWEaA6E1DlDII2HynTcxIlDxoCyxAjV3Mlx2pA12GY12MbgzrOMJn2ASph9lFBSUHh1RB4ywAMA3qDEzMJgJFU5TB1ZSrbSxM5WwGPcHpJk2DG9lH5qxLVqRB0VKEQSwDdyap0pmEvqyIDSGZYq0LyE3LnExHKuSGjk2pPARMAEHo1gHoCSJoaczD4DUFeEGDTu2FdMxHMWIISyHq0xzFeEUFTuxDSSGMKS3FOyRGe40p5pHpJc0Y6q0LQO1EDWQnMqwZlVSphWxnyc2IbyIo1qwFgM3YXITocy2HeIzAe0JrKSTE1W0I3IwrYEKq5RmX6MHLOAaZWyTJ"
+  let link = 'https://hurt.handlosfera.pl/wszystkie.html';
+  let beforelink = "https://hurt.handlosfera.pl/login/wZFC9RIHMOGMBSaFGEmM4bxJjywE2R1MgE1okyzLDEJpGcyq1yGqMyyFaAJM3tmoI5zDl1Rq6WGqWESFD9JDQSIZHOIMOMaFcM1D2cxrA1HAZkxFug0AbczqaAyJw90YUSHA4IxAi8vFkWxnYu2EAu0I05Rnmyxq4VwnWuyL3baELuyMjSKnHAJGRW3FXMSZHyRA4RanIkzoB1TocyHpnITIFWKn5WxGMEHLbIKIgS1I25TF0umYRWQJuWUqEyzr3MwIiV3YmkxIAEKGjczAkWKnkpJHmIIZ5VQMw5JIGqmEiAmDhOQJw50p2jRAdOGowuSHMk0F2cyq2qwq2HHpVEJAcASEjj0H1SUMe0zIJAmEDqKqLyIFDc2Xe9vZiMKMnWHn1MKr";
 
   //CREDENTIALS
   let login = 'solvolyse@company-mails.com'
@@ -72,7 +72,7 @@ var pool = mysql.createPool({
       await page.type('input[type="password"]', password);
 
       await Promise.all([
-        page.waitForNavigation({timeout: 5000}), // was 60000
+        page.waitForNavigation({timeout: 50000}), // was 60000
         await page.click('.btn-primary')
       ]);
 
@@ -192,14 +192,14 @@ var pool = mysql.createPool({
                     stock = parseInt(stock);
                     //Pushing the data into the array
 
-                    data = {productname: productname, stock: stock, price: price, dater: UTCdate};
-                    arrayofdata.push(data);
+                    // data = {productname: productname, stock: stock, price: price, dater: UTCdate};
+                    // arrayofdata.push(data);
 					          
-                       let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
-                        pool.query(sqlstring, function(err, result){
-                          if (err) throw err;
-                          console.log('added');
-                        })
+                    //    let sqlstring = `INSERT into Main(productname, stock, price, dater)values("${productname}", ${stock}, ${price}, "${UTCdate}")`;
+                    //     pool.query(sqlstring, function(err, result){
+                    //       if (err) throw err;
+                    //       console.log('added');
+                    //     })
                       
                     console.log(productname);
                     } catch (err) {
@@ -211,7 +211,7 @@ var pool = mysql.createPool({
                     await page.goto('https://hurt.handlosfera.pl/wszystkie' + podstronki + '.html')
                     ]);
                     products = await page.$$('.singleProductContainer');
-                    await page.waitForTimeout(5000); //add catch? add zeroes
+                    await page.waitForTimeout(10000); //add catch? not sure what the amount should be there
                 }
 
     console.log('The subpage of ' + link + ' number ' + podstronki + ' has been finished.')
